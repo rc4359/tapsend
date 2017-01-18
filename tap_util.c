@@ -51,7 +51,6 @@ unsigned int tap_msg_gen(unsigned int hsid, unsigned char *msg, unsigned char *s
     char hsid_str[32] = {0};
     unsigned int i = 0;
     unsigned char chk_sum[4] = {0x0d, 0x0d, 0x0d, 0x0d};
-    printf("\n\n xxx[%02x] \n\n", chk_sum[3]);
     buf[i] = TAP_START_BYTE;
     i++;
     
@@ -75,7 +74,6 @@ unsigned int tap_msg_gen(unsigned int hsid, unsigned char *msg, unsigned char *s
     check_sum_gen((unsigned char *)buf, i, chk_sum);
     memcpy(&buf[i], chk_sum, sizeof(chk_sum));
     i+= sizeof(chk_sum);
-    printf("\n\n [%02x] \n\n", chk_sum[3]);
     memcpy(serial_buf, buf, i + 1);
     
     return i;

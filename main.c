@@ -36,6 +36,10 @@ char test_str1[] = "Resident Call \0";
 char test_str2[] = "Bed 110\0";
 unsigned char tcr = 1;
 unsigned char auto_test_str[128] = {0};
+ 
+
+int success_flag = 0;
+
 
 void* do_rx_data(void *arg)
 {
@@ -59,6 +63,8 @@ void* do_rx_data(void *arg)
             }
 
             printf("received %i bytes: %s\n", n, (char *)buf);
+		if(strcasestr(buf, "211") != NULL)
+			success_flag = 1;
         }
 
 #ifdef _WIN32
@@ -133,39 +139,26 @@ int main()
    printf("\n");
    //printf("sent: %s\n", bytes_to_send);
 
-   while(1)
-   {
-       
-#ifdef _WIN32
-        Sleep(100 * 60);  // 10 sec
-#else
-        usleep(100000);  /* sleep for 100 milliSeconds */
-#endif
-#if 0	   
-        printf("tcr: [%02x]\n\n", tcr);
-       memset(auto_test_str, 0, sizeof(auto_test_str));
-       memset(bytes_to_send, 0 ,sizeof(bytes_to_send));
-       
-   //    sprintf(auto_test_str, "%s%d%s",test_str1 , tcr, test_str2);
-       memcpy(auto_test_str, test_str1 , strlen(test_str1));
-       memcpy(auto_test_str + strlen(test_str1), &tcr, 1);
-       memcpy(auto_test_str + strlen(test_str1) + 1, test_str2, strlen(test_str2));
-       
-        int tap_len = tap_msg_gen(11, auto_test_str ,bytes_to_send);
 
-       RS232_cputs(cport_nr, (const char *)bytes_to_send);
-       printf(" TAP Raw data --> ");
-       for(j = 0; j < tap_len; j++)
-       {
-           printf(" %02x", bytes_to_send[j]);
-       }
-       printf("\n");
-       
-   
-       
-       tcr++;
+	unsigned int ack_time_out = 0;
+
+	while(1)
+	{
+#ifdef _WIN32
+        Sleep(1000);  // 1 sec
+#else
+        usleep(1000000);  
 #endif
-   }
+	if(++ack_time_out > 5)
+		break;
+
+	if(success_flag)
+		break;
+
+	}
+
+	if(success_flag == 0)
+		printf(" Failed!!, Pager can't send your message !! \n");
   return(0);
 }
 
