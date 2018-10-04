@@ -85,7 +85,7 @@ int main()
 	char line[256] = {0};
 	int hsid = 0;
 	unsigned char bytes_to_send[256] = {0};
-	
+	char hsid_str[64] = {0};
   if(RS232_OpenComport(cport_nr, bdrate, mode))
   {
     printf("Can not open comport\n");
@@ -110,14 +110,25 @@ int main()
 #endif  
 
 	printf(" Input handset ID :") ;  
-   if (fgets(line, sizeof(line), stdin)) 
+        if (fgets(line, sizeof(line), stdin)) 
+
 	{
+#if 0
 		if (1 != sscanf(line, "%d", &hsid)) 
 		{
 				printf("HS ID %d not availed!! \n", hsid);	
 				return -1;
    			/* i can be safely used */
 		}
+#else
+
+		if (1 != sscanf(line, "%s", hsid_str)) 
+		{
+				printf("HS ID %d not availed!! \n", hsid);	
+				return -1;
+   			/* i can be safely used */
+		}
+#endif
 	}
 
 	printf(" Input message to send :") ;
@@ -127,8 +138,12 @@ int main()
 
 	}
 
-
+#if 0
    unsigned int tap_len = tap_msg_gen(hsid, (unsigned char *)line ,bytes_to_send);
+#else
+   unsigned int tap_len = tap_msg_gen(hsid_str, (unsigned char *)line ,bytes_to_send);
+#endif
+
 
    RS232_cputs(cport_nr, (const char *)bytes_to_send);
    printf(" TAP Raw data --> ");

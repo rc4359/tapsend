@@ -23,7 +23,11 @@ compile with the command: gcc demo_tx.c rs232.c -Wall -Wextra -o2 -o test_tx
 #include "rs232.h"
 #include "tap_util.h"
 
-int cport_nr = 0;        /* /dev/ttyS0 (COM1 on windows) */
+#define TTYUSB0_PORT_NB	17
+#define TTYS0_PORT_NB	0
+
+
+int cport_nr = TTYS0_PORT_NB;        /* /dev/ttyS0 (COM1 on windows) */
 int bdrate = 9600;            /* 9600 baud */
 
 #ifndef _WIN32

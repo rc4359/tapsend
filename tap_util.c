@@ -45,7 +45,7 @@ int check_sum_gen(unsigned char *data, unsigned char len,
         return 0;
 }
 
-unsigned int tap_msg_gen(unsigned int hsid, unsigned char *msg, unsigned char *serial_buf)
+unsigned int tap_msg_gen(char *hsid, unsigned char *msg, unsigned char *serial_buf)
 {
     unsigned char buf[256] = {0};
     char hsid_str[32] = {0};
@@ -53,8 +53,11 @@ unsigned int tap_msg_gen(unsigned int hsid, unsigned char *msg, unsigned char *s
     unsigned char chk_sum[4] = {0x0d, 0x0d, 0x0d, 0x0d};
     buf[i] = TAP_START_BYTE;
     i++;
-    
+  #if 0  
     sprintf(hsid_str, "%d", hsid);
+#else
+    strcpy(hsid_str, hsid);
+#endif
     
     strcpy((char *)&buf[i], hsid_str);
     i += strlen(hsid_str);
