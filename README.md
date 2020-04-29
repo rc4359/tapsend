@@ -1,6 +1,6 @@
 # tapsend
 
-TAP message send process .This is a single TAP message host interface process.
+Pager TAP message send process .This is a single TAP message host interface process.
 
 No login/logout implemented. just send message
 
