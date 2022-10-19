@@ -76,16 +76,72 @@ void* do_rx_data(void *arg)
 }
 
 
-
-int main()
+int dump_rs232_port_msg(int nr)
 {
 
+	if(nr == 0)
+	{
+		printf("tap port : com1 \n");
+	}
+	else if((nr >= 16) && (nr <= 20))
+	{
+		printf("tap port : USB%d \n", nr - 16);
+	}
+	else
+	{
+		printf("tap port : ERROR !! \n");
+	}
+	return 0;
+}
+int main(int argc, char *argv[])
+{
+	int usb_port = 0;
   char mode[]={'8','N','1',0};
     int j = 0;
 	char line[256] = {0};
 	int hsid = 0;
 	unsigned char bytes_to_send[256] = {0};
 	char hsid_str[64] = {0};
+
+  	if(argc > 1)
+        {
+                int tmp = 1;
+                while(tmp < argc)
+                {
+                        if(strcmp(argv[tmp], "-u") == 0)
+                        {
+                                if((strlen(argv[tmp+1]) > 0))
+                                {
+					usb_port = atoi(argv[tmp+1]);
+					
+					if((usb_port < 0) ||  (usb_port > 5))
+                                        {
+						printf(" input usb port error !!");
+    						return(0);
+					}
+					cport_nr = usb_port + 16;
+                                }
+                                else
+                                {
+                                        printf(" input dlf file name error !!\n");
+                                        return -1;
+                                }
+                        }
+			else if(strcmp(argv[tmp], "-h") == 0)
+                        {
+                                printf(" ===== tap send usage ========================= \n");
+                                printf(" RS232 port fixed COM1 \n");
+                                printf(" -u : change to USB port (0 ~5) . example -u 3 for usb3 \n");
+                                printf(" ==================================================== \n");
+    				return(0);
+                        }
+                        tmp++;
+
+		}
+
+	}
+
+	dump_rs232_port_msg(cport_nr);
   if(RS232_OpenComport(cport_nr, bdrate, mode))
   {
     printf("Can not open comport\n");
